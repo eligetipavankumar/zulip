@@ -14,9 +14,12 @@ COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 RUN pnpm fetch || true
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# Copy frontend sources and build
-COPY static/ ./static 2>/dev/null || true
-COPY web/ ./web 2>/dev/null || true
+# Ensure directories exist (avoids COPY errors if missing)
+RUN mkdir -p static web
+
+# Copy frontend sources
+COPY static/ ./static
+COPY web/ ./web
 COPY . .
 
 # Build frontend
@@ -57,14 +60,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Copy Python packages from builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages || true
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 
 # Copy application code
 COPY . .
 
-# Copy built frontend artifacts
-COPY --from=frontend /usr/src/app/web/dist /app/static 2>/dev/null || true
-COPY --from=frontend /usr/src/app/static /app/static 2>/dev/null || true
+# Copy built frontend artifacts (optional, won’t break if empty because dirs exist)
+RUN mkdir -p /app/static
+COPY --from=frontend /usr/src/app/web/dist /app/static
+COPY --from=frontend /usr/src/app/static /app/static
 
 # Create non-root user
 RUN useradd --create-home zulipuser && chown -R zulipuser:zulipuser /app
