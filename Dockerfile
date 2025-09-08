@@ -76,3 +76,4 @@ EXPOSE 9991
 # Start command
 CMD ["bash", "-lc", "python manage.py migrate --noinput && python manage.py collectstatic --noinput || true && gunicorn -b 0.0.0.0:9991 zproject.wsgi:application --workers 3"]
 
+
