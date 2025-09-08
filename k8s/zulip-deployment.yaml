@@ -27,8 +27,7 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: zulip-secret
-                  key: db-password
+                  name: zulip-secrets
+                  key: POSTGRES_PASSWORD   # <- fixed from 'db-password'
             - name: DB_NAME
               value: zulip
-
