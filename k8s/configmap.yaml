@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zulip-config
+data:
+  # Put lightweight config values here
+  ZULIP_EXTRA_SETTINGS: |
+    # Example: any Django settings you want to override can be placed here
+    # NOTE: For production, use real config and secrets!
+    ALLOWED_HOSTS = ["*"]
+

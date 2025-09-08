@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zulip
+  namespace: zulip-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zulip
+  template:
+    metadata:
+      labels:
+        app: zulip
+    spec:
+      containers:
+        - name: zulip
+          image: your-dockerhub-username/zulip-app:latest   # <-- Image from Docker Hub
+          imagePullPolicy: Always                          # Always check Docker Hub for latest
+          ports:
+            - containerPort: 9991
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_USER
+              value: zulip
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zulip-secret
+                  key: db-password
+            - name: DB_NAME
+              value: zulip
+
